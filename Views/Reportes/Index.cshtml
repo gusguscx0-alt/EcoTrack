@@ -1,0 +1,427 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Monitoreo - ECOTRACK</title>
+    
+    <!-- CSS de Leaflet con integrity segura -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Estructura general de 2 columnas sin espacios sobrantes */
+        .dashboard-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* BARRA LATERAL (SIDEBAR) */
+        .sidebar {
+            width: 260px;
+            min-width: 260px;
+            background-color: #ffffff;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .sidebar-brand svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1b5e20;
+            letter-spacing: 1px;
+        }
+
+        /* Perfil de usuario */
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #f1f8e9;
+            margin: 16px 14px 6px 14px;
+            border-radius: 10px;
+            border: 1px solid #dcedc8;
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            background: #2e7d32;
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .user-details {
+            overflow: hidden;
+        }
+
+        .user-name {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #1b5e20;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            font-size: 11.5px;
+            color: #558b2f;
+            font-weight: 600;
+        }
+
+        /* Navegación */
+        .sidebar-menu {
+            flex: 1;
+            padding: 12px 14px;
+            overflow-y: auto;
+        }
+
+        .menu-heading {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: 0.8px;
+            margin: 16px 0 6px 8px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            color: #475569;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            margin-bottom: 3px;
+        }
+
+        .menu-link:hover {
+            background-color: #f1f5f9;
+            color: #1b5e20;
+        }
+
+        .menu-link.active {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+            font-weight: 700;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .menu-icon {
+            font-size: 16px;
+        }
+
+        .sidebar-bottom {
+            padding: 14px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .btn-exit {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #dc2626;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background 0.15s;
+        }
+
+        .btn-exit:hover {
+            background-color: #fee2e2;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        .main-viewport {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+            background: #ffffff;
+        }
+
+        /* Barra superior */
+        .top-navbar {
+            height: 64px;
+            min-height: 64px;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 500;
+        }
+
+        .title-block h2 {
+            font-size: 16.5px;
+            font-weight: 700;
+            color: #1b5e20;
+        }
+
+        .title-block p {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .toolbar-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-center-map {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-center-map:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-new-incident {
+            background: #2e7d32;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-new-incident:hover {
+            background: #1b5e20;
+        }
+
+        /* ÁREA DEL MAPA */
+        .map-stage {
+            flex: 1;
+            width: 100%;
+            height: calc(100vh - 64px);
+            position: relative;
+        }
+
+        #eco-map {
+            width: 100%;
+            height: 100%;
+            background: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <!-- PANEL IZQUIERDO -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2">
+                <path d="M12 2L2 22h20L12 2zM12 6l7.5 13h-15L12 6z" stroke-linejoin="round"/>
+                <circle cx="12" cy="14" r="2" fill="#2e7d32"/>
+            </svg>
+            <span class="brand-title">ECOTRACK</span>
+        </div>
+
+        <div class="user-card">
+            <div class="user-avatar">JM</div>
+            <div class="user-details">
+                <div class="user-name">@(ViewData["UsuarioNombre"] ?? "Julio Manuel")</div>
+                <div class="user-role">@(ViewData["UsuarioRol"] ?? "Inspector Ambiental")</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <div class="menu-heading">MONITOREO & MAPA</div>
+            <a href="/Reportes/Index" class="menu-link active">
+                <span class="menu-icon">🗺️</span>
+                <span>Mapa de Reportes</span>
+            </a>
+
+            <div class="menu-heading">ADMINISTRACIÓN & TABLAS</div>
+            <a href="/Usuarios/Index" class="menu-link">
+                <span class="menu-icon">👥</span>
+                <span>Usuarios</span>
+            </a>
+            <a href="/RetosEcologicos/Index" class="menu-link">
+                <span class="menu-icon">🌱</span>
+                <span>Retos Ecológicos</span>
+            </a>
+            <a href="/ParticipantesRetos/Index" class="menu-link">
+                <span class="menu-icon">🤝</span>
+                <span>Participantes Retos</span>
+            </a>
+            <a href="/HistorialPuntos/Index" class="menu-link">
+                <span class="menu-icon">🏆</span>
+                <span>Historial de Puntos</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="/Usuarios/Index" class="btn-exit">
+                <span class="menu-icon">🚪</span>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="main-viewport">
+        <header class="top-navbar">
+            <div class="title-block">
+                <h2>Monitoreo Territorial en Tiempo Real</h2>
+                <p>Haz clic en cualquier punto para registrar un nuevo reporte o explora los existentes</p>
+            </div>
+            <div class="toolbar-buttons">
+                <button type="button" class="btn-center-map" onclick="centrarVista()">🎯 Centrar</button>
+                <button type="button" class="btn-new-incident" onclick="modoLevantarReporte()">➕ Levantar Reporte</button>
+            </div>
+        </header>
+
+        <div class="map-stage">
+            <div id="eco-map"></div>
+        </div>
+    </main>
+</div>
+
+<!-- Scripts de Leaflet -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Coordenadas centradas en el municipio
+        var COORD_LAT = 19.7130;
+        var COORD_LNG = -98.9690;
+        var ZOOM_DEFAULT = 13;
+
+        // Inicializar el mapa
+        var map = L.map('eco-map', {
+            center: [COORD_LAT, COORD_LNG],
+            zoom: ZOOM_DEFAULT,
+            zoomControl: true,
+            scrollWheelZoom: true
+        });
+
+        // Capa de losetas de OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        // Escala métrica inferior
+        L.control.scale({ imperial: false, metric: true }).addTo(map);
+
+        // Forzar cálculo de renderizado de losetas para eliminar el fondo gris
+        setTimeout(function () {
+            map.invalidateSize();
+        }, 150);
+
+        // Puntos de ejemplo
+        var marcadores = [
+            { lat: 19.7150, lng: -98.9680, tipo: "Tiradero Clandestino", estatus: "Pendiente" },
+            { lat: 19.7080, lng: -98.9750, tipo: "Fuga de Agua", estatus: "En Proceso" },
+            { lat: 19.7210, lng: -98.9620, tipo: "Falta de Luminarias", estatus: "Resuelto" }
+        ];
+
+        marcadores.forEach(function (m) {
+            L.marker([m.lat, m.lng]).addTo(map).bindPopup(`
+                <div style="font-family: inherit; font-size: 13px;">
+                    <strong style="color: #2e7d32;">${m.tipo}</strong><br/>
+                    <span>Estado: <b>${m.estatus}</b></span><br/>
+                    <small style="color: #64748b;">${m.lat.toFixed(4)}, ${m.lng.toFixed(4)}</small>
+                </div>
+            `);
+        });
+
+        // Clic para nuevo reporte
+        map.on('click', function (e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+
+            L.popup()
+                .setLatLng(e.latlng)
+                .setContent(`
+                    <div style="font-family: inherit; font-size: 13px;">
+                        <b style="color: #1b5e20;">📍 Nuevo Reporte Ecológico</b><br/>
+                        <span style="font-size: 11px; color: #64748b;">Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}</span><br/><br/>
+                        <button style="background: #2e7d32; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: 600;" 
+                                onclick="alert('Ubicación fijada:\\nLatitud: ${lat}\\nLongitud: ${lng}')">
+                            Registrar aquí
+                        </button>
+                    </div>
+                `)
+                .openOn(map);
+        });
+
+        // Función para recentrar
+        window.centrarVista = function () {
+            map.flyTo([COORD_LAT, COORD_LNG], ZOOM_DEFAULT, { duration: 1.0 });
+        };
+
+        window.modoLevantarReporte = function () {
+            alert("Haz clic en cualquier punto del mapa para colocar la marca de la incidencia.");
+        };
+
+        window.addEventListener('resize', function () {
+            map.invalidateSize();
+        });
+    });
+</script>
+
+</body>
+</html>

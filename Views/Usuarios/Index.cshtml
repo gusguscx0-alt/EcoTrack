@@ -1,0 +1,389 @@
+﻿@{
+    ViewData["Title"] = "Acceso - ECOTRACK";
+}
+
+<div class="eco-wrapper">
+    <div class="eco-card">
+        <div class="eco-header">
+            <div class="eco-logo-circle">
+                <svg viewBox="0 0 24 24" class="eco-logo-svg" fill="none" stroke="#2e7d32" stroke-width="2">
+                    <path d="M12 2L2 22h20L12 2zM12 6l7.5 13h-15L12 6z" stroke-linejoin="round" />
+                    <circle cx="12" cy="14" r="2" fill="#2e7d32" />
+                </svg>
+            </div>
+            <h1 class="eco-title">ECOTRACK</h1>
+            <p class="eco-subtitle">Plataforma Comunitaria de Monitoreo Ambiental</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="eco-alert alert-error">
+                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>@ViewBag.Error</span>
+            </div>
+        }
+        @if (ViewBag.Mensaje != null)
+        {
+            <div class="eco-alert alert-success">
+             
+                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span>@ViewBag.Mensaje</span>
+            </div>
+        }
+
+        <div id="contenedor-login">
+            <form action="/Usuarios/Login" method="post" class="eco-form">
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" name="correo" required placeholder="tu.correo@ejemplo.com" class="eco-input" />
+                </div>
+
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPass" name="password_hash" required placeholder="••••••••" class="eco-input pass-input" />
+                        <button type="button" class="btn-toggle-pass" onclick="alternarPassword('loginPass', this)">
+                            <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="eco-btn btn-primary">Iniciar Sesión</button>
+            </form>
+
+            <div class="eco-switch">
+                <p>¿Aún no tienes una cuenta? <a href="javascript:void(0)" onclick="mostrarRegistro()" class="eco-link">Regístrate aquí</a></p>
+            </div>
+        </div>
+
+        <div id="contenedor-registro" style="display: none;">
+            <form action="/Usuarios/Registro" method="post" class="eco-form">
+                <div class="form-group">
+                    <label>Nombre(s)</label>
+                    <input type="text" name="nombre" required placeholder="Tu nombre" class="eco-input" />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Apellido Paterno</label>
+                        <input type="text" name="apellido_paterno" required placeholder="Paterno" class="eco-input" />
+                    </div>
+                    <div class="form-group">
+                        <label>Apellido Materno</label>
+                        <input type="text" name="apellido_materno" placeholder="Materno (opcional)" class="eco-input" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Rol en la Comunidad</label>
+                    <select name="rol" class="eco-input eco-select" required>
+                        <option value="Ciudadano" selected>Ciudadano</option>
+                        <option value="Voluntario">Voluntario</option>
+                        <option value="Inspector Ambiental">Inspector Ambiental</option>
+                        <option value="Administrador">Administrador</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" name="correo" required placeholder="tu.correo@ejemplo.com" class="eco-input" />
+                </div>
+
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="regPass" name="password_hash" required placeholder="Crea tu contraseña" class="eco-input pass-input" />
+                        <button type="button" class="btn-toggle-pass" onclick="alternarPassword('regPass', this)">
+                            
+                            <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="eco-btn btn-secondary">Crear Cuenta</button>
+            </form>
+
+            <div class="eco-switch">
+                <p>¿Ya estás registrado? <a href="javascript:void(0)" onclick="mostrarLogin()" class="eco-link">Inicia sesión</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+    body {
+        margin: 0;
+        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+    }
+
+    .eco-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 90vh;
+        padding: 20px;
+    }
+
+    .eco-card {
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(46, 125, 50, 0.15);
+        border: 1px solid rgba(46, 125, 50, 0.1);
+        width: 100%;
+        max-width: 440px;
+        padding: 35px 30px;
+        box-sizing: border-box;
+    }
+
+    .eco-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .eco-logo-circle {
+        width: 65px;
+        height: 65px;
+        background: #e8f5e9;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px;
+        border: 2px solid #81c784;
+    }
+
+    .eco-logo-svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .eco-title {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 800;
+        color: #1b5e20;
+        letter-spacing: 1.5px;
+    }
+
+    .eco-subtitle {
+        margin: 5px 0 0;
+        font-size: 13px;
+        color: #4e7d55;
+    }
+
+    .eco-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        flex: 1;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 12px;
+    }
+
+    .form-group label {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #2e5934;
+    }
+
+    .eco-input {
+        padding: 10px 14px;
+        border: 1.5px solid #c8e6c9;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        transition: all 0.2s ease;
+        background: #fbfdfb;
+        box-sizing: border-box;
+    }
+
+    .eco-select {
+        cursor: pointer;
+        color: #2e5934;
+        font-weight: 500;
+    }
+
+    .eco-input:focus {
+        border-color: #2e7d32;
+        box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+        background: #ffffff;
+    }
+
+    .password-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .pass-input {
+        width: 100%;
+        padding-right: 42px;
+    }
+
+    .btn-toggle-pass {
+        position: absolute;
+        right: 12px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        outline: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .btn-toggle-pass svg {
+            width: 20px;
+            height: 20px;
+            transition: stroke 0.2s;
+        }
+
+        .btn-toggle-pass:hover svg {
+            stroke: #2e7d32; 
+        }
+
+    .eco-btn {
+        margin-top: 8px;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+        .eco-btn:active {
+            transform: scale(0.99);
+        }
+
+    .btn-primary {
+        background: #2e7d32;
+        color: #ffffff;
+    }
+
+        .btn-primary:hover {
+            background: #1b5e20;
+        }
+
+    .btn-secondary {
+        background: #388e3c;
+        color: #ffffff;
+    }
+
+        .btn-secondary:hover {
+            background: #2e7d32;
+        }
+
+    .eco-switch {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 13.5px;
+        color: #555;
+    }
+
+    .eco-link {
+        color: #1b5e20;
+        font-weight: bold;
+        text-decoration: none;
+        border-bottom: 1.5px dashed #4caf50;
+        padding-bottom: 1px;
+    }
+
+        .eco-link:hover {
+            color: #2e7d32;
+            border-bottom-style: solid;
+        }
+
+    .eco-alert {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .alert-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+    .alert-error {
+        background: #ffebee;
+        color: #c62828;
+        border: 1px solid #ffcdd2;
+    }
+
+    .alert-success {
+        background: #e8f5e9;
+        color: #1b5e20;
+        border: 1px solid #c8e6c9;
+    }
+</style>
+
+<script>
+    function mostrarRegistro() {
+        document.getElementById('contenedor-login').style.display = 'none';
+        document.getElementById('contenedor-registro').style.display = 'block';
+    }
+
+    function mostrarLogin() {
+        document.getElementById('contenedor-registro').style.display = 'none';
+        document.getElementById('contenedor-login').style.display = 'block';
+    }
+
+    function alternarPassword(inputId, boton) {
+        var input = document.getElementById(inputId);
+        var visibleEye = boton.querySelector('.icon-eye');
+        var hiddenEye = boton.querySelector('.icon-eye-off');
+
+        if (input.type === "password") {
+            input.type = "text";
+            visibleEye.style.display = "none";
+            hiddenEye.style.display = "block";
+        } else {
+            input.type = "password";
+            visibleEye.style.display = "block";
+            hiddenEye.style.display = "none";
+        }
+    }
+</script>
+}
