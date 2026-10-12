@@ -6,7 +6,7 @@ namespace Integradora.Models
 
     public class Conexion{
 
-        private string _connectionString = "Host=ep-silent-recipe-b4wr6fss-pooler.c-6.us-east-2.aws.neon.tech;Port=5432;Database=neondb;Username=neondb_owner;Password=npg_aKZo7B2wmsAR;SSL Mode=Require;Trust Server Certificate=true;";
+        private string _connectionString = "";
         private NpgsqlConnection _connection = new();
 
         public Conexion() { }
