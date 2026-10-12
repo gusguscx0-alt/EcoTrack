@@ -1,8 +1,48 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<!-- 1. Importamos los estilos y funciones del mapa (Leaflet) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h2>Mi Ubicación en EcoTrack</h2>
+    <p>Permite el acceso a tu ubicación para centrar el mapa.</p>
+    
+    <!-- 2. El contenedor donde se dibujará el mapa -->
+    <div id="miMapa" style="height: 500px; width: 100%; border-radius: 10px; border: 2px solid #ccc;"></div>
 </div>
+
+<!-- 3. El script que pide la ubicación y dibuja el mapa -->
+<script>
+    // Verificamos si el dispositivo soporta geolocalización
+    if (navigator.geolocation) {
+        // Pedimos la ubicación actual
+        navigator.geolocation.getCurrentPosition(function (position) {
+            
+            // Obtenemos latitud y longitud del GPS
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+
+            // Inicializamos el mapa centrado en esas coordenadas con un zoom de 15
+            var map = L.map('miMapa').setView([lat, lon], 15);
+
+            // Cargamos el diseño del mapa (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Agregamos un marcador en la ubicación exacta del usuario
+            L.marker([lat, lon]).addTo(map)
+                .bindPopup('<b>¡Estás aquí!</b><br>Ubicación detectada.')
+                .openPopup();
+
+        }, function (error) {
+            // Si el usuario deniega el permiso o hay un error
+            alert("No se pudo obtener la ubicación. Asegúrate de dar permisos en tu navegador.");
+            
+            // Dibujamos un mapa por defecto (ejemplo: centrado en México)
+            var map = L.map('miMapa').setView([23.6345, -102.5528], 5);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        });
+    } else {
+        alert("Tu navegador no soporta la geolocalización.");
+    }
+</script>
