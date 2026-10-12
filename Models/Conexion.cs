@@ -6,10 +6,13 @@ namespace Integradora.Models
 
     public class Conexion{
 
-        private string _connectionString = "";
+        private string _connectionString;
         private NpgsqlConnection _connection = new();
 
-        public Conexion() { }
+        public Conexion()
+        {
+            _connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
+        }
 
         public DataTable GetQuery(string sql) {
             DataTable tb = new();
