@@ -387,6 +387,32 @@
                 </div>
             `);
         });
+            // --- CÓDIGO DEL PUNTO AZUL (PEGAR AQUÍ) ---
+        
+        // Buscamos tu ubicación real y movemos el mapa hacia allá
+        map.locate({setView: true, maxZoom: 16});
+
+        // Cuando el navegador encuentre tu GPS, dibujamos el punto
+        map.on('locationfound', function(e) {
+            var iconoAzul = L.divIcon({
+                className: 'icono-ubicacion-actual',
+                html: '<div style="background-color: #4285F4; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.4);"></div>',
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            });
+
+            // Agregamos tu ubicación al mapa
+            L.marker(e.latlng, {icon: iconoAzul}).addTo(map)
+                .bindPopup("<b style='color:#1b5e20;'>¡Estás aquí!</b>")
+                .openPopup();
+        });
+
+        // Si el navegador bloquea el permiso, no hacemos nada (se queda en Ojo de Agua)
+        map.on('locationerror', function(e) {
+            console.log("No se pudo obtener la ubicación: " + e.message);
+        });
+        
+        // --- FIN DEL CÓDIGO DEL PUNTO AZUL ---
 
         // Clic para nuevo reporte
         map.on('click', function (e) {
@@ -408,9 +434,9 @@
                 .openOn(map);
         });
 
-        // Función para recentrar
+        // Función para recentrar en el usuario
         window.centrarVista = function () {
-            map.flyTo([COORD_LAT, COORD_LNG], ZOOM_DEFAULT, { duration: 1.0 });
+            map.locate({setView: true, maxZoom: 16});
         };
 
         window.modoLevantarReporte = function () {
